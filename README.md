@@ -11,5 +11,7 @@
 - torch==1.11.0
 
 [DQN](lesson3/dqn/train.py)
+
 [Policy Gradient](lesson4/policy_gradient/train.py)
+
 [DDPG](lesson5/ddpg/train.py)
