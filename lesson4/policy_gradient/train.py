@@ -71,11 +71,10 @@ def main():
     alg = PolicyGradient(model, lr=LEARNING_RATE)
     agent = Agent(alg)
 
-    # 加载模型并评估
-    # if os.path.exists('./model.ckpt'):
-    #     agent.restore('./model.ckpt')
-    #     run_evaluate_episodes(agent, env, render=True)
-    #     exit()
+    # load model which already trained several times
+    save_path = './dqn_model.pth'
+    if os.path.exists(save_path):
+        agent.load(save_path)
 
     for i in range(1000):
         batch_obs, batch_action, batch_reward = run_train_episode(agent, env)
@@ -92,9 +91,8 @@ def main():
             print('Test reward: {}'.format(total_reward))
             writer.add_scalar('reward/test', total_reward, i)
 
-    # save the parameters to ./model.ckpt
-    # agent.save('./model.ckpt')
-
+    # save the parameters to ./model.pth
+    agent.save(save_path)
 
 if __name__ == '__main__':
     main()

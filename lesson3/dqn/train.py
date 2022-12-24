@@ -91,15 +91,17 @@ if __name__ == '__main__':
         e_greed=0.1,  # 有一定概率随机选取动作，探索
         e_greed_decrement=1e-6)  # 随着训练逐步收敛，探索的程度慢慢降低
 
-    # 加载模型
-    # save_path = './dqn_model.ckpt'
-    # agent.restore(save_path)
+    # load model which already trained several times
+    save_path = './dqn_model.pth'
+    if os.path.exists(save_path):
+        agent.load(save_path)
 
     # 先往经验池里存一些数据，避免最开始训练的时候样本丰富度不够
     while len(rpm) < MEMORY_WARMUP_SIZE:
         run_train_episode(agent, env, rpm)
 
     max_episode = 1000
+    episode_per_evaluate = 50
 
     # start train
     episode = 0
@@ -114,14 +116,14 @@ if __name__ == '__main__':
         writer.add_scalar('train/reward', total_reward, episode)
         writer.add_scalar('train/loss', total_loss, episode)
 
-        if(episode and episode % 50 == 0):
+        if(episode and episode % episode_per_evaluate == 0):
             # test part       render=True 查看显示效果
             eval_reward = run_evaluate_episodes(agent, env, render=False)
-            writer.add_scalar('test/reward', eval_reward, episode/50)
+            writer.add_scalar('test/reward', eval_reward,
+                              episode/episode_per_evaluate)
 
             print('episode:%-4d | e_greed:%.5f | Test reward:%.1f' % (
                 episode, agent.e_greed, eval_reward))
 
-    # 训练结束，保存模型
-    # save_path = './dqn_model.ckpt'
-    # agent.save(save_path)
+    # save the parameters to ./model.pth
+    agent.save(save_path)

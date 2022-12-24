@@ -80,3 +80,9 @@ class DQN():
         """ 把 self.model 的模型参数值同步到 self.target_model
         """
         self.target_model.load_state_dict(self.model.state_dict())
+
+    def save(self, save_path):
+        self.model.save(save_path)
+
+    def load(self, path):
+        self.model.load(path)

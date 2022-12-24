@@ -49,3 +49,9 @@ class Agent():
         done = torch.tensor(done).reshape(-1, 1).to(device)
         loss = self.algo.learn(obs, act, reward, next_obs, done)  # 训练一次网络
         return loss
+
+    def save(self, save_path):
+        self.algo.save(save_path)
+
+    def load(self, path):
+        self.algo.load(path)

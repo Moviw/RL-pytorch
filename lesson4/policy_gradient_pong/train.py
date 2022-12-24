@@ -106,7 +106,7 @@ if __name__ == '__main__':
             print('Test reward: {}'.format(total_reward))
             writer.add_scalar('reward/test', total_reward, i)
 
-        # save the parameters to ./model.ckpt
+        # save the parameters to ./model.pth
         if((i+1) % 300 == 0):
             agent.save(
-                './policy_gradient_pong/CNN_model/{}_pong_model.ckpt'.format(i+1))
+                './policy_gradient_pong/CNN_model/{}_pong_model.pth'.format(i+1))

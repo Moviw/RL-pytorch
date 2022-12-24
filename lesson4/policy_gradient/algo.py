@@ -51,3 +51,9 @@ class PolicyGradient():
         loss.backward()
         self.optimizer.step()
         return loss.item()
+
+    def save(self, save_path):
+        self.model.save(save_path)
+
+    def load(self, path):
+        self.model.load(path)

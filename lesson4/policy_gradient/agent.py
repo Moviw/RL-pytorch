@@ -36,3 +36,9 @@ class Agent():
 
         loss = self.algo.learn(obs, act, reward)
         return loss
+
+    def save(self, save_path):
+        self.algo.save(save_path)
+
+    def load(self, path):
+        self.algo.load(path)

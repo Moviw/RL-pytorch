@@ -27,6 +27,12 @@ class Model(torch.nn.Module):
         prob = self.softmax(obs)
         return prob
 
+    def save(self, save_path):
+        torch.save(self.state_dict(), save_path)
+
+    def load(self, path):
+        self.load_state_dict(torch.load(path))
+
 
 if __name__ == '__main__':
     a = torch.Tensor(np.random.randn(48))
