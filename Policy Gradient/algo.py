@@ -4,6 +4,14 @@ from model import *
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
+# [r1,r2,...,rT] --> [G1,G2,...,GT]
+def calc_reward_to_G(reward_list, gamma=1.0):
+    for i in range(len(reward_list) - 2, -1, -1):
+        # 从后往前推 最后一个的价值G就是其本身 前面的按照递推式更新:G_i = r_i + γ·G_i+1
+        reward_list[i] += gamma * reward_list[i + 1]  # Gt
+    return reward_list
+
+
 class PolicyGradient():
     def __init__(self, model, lr):
         """ Policy Gradient algorithm
@@ -36,6 +44,8 @@ class PolicyGradient():
         """
         prob = self.model(obs)  # 获取输出动作概率
 
+        baseline = reward.mean()
+        G_value = calc_reward_to_G(reward)  # 每个动作对应的G不同
         log_prob = prob.log().gather(dim=1, index=action.long())  # 直接用这一行代码与下面5行等效
 
         # action_dim = prob.shape[-1]
@@ -44,8 +54,7 @@ class PolicyGradient():
         # prob = prob.log() * action_onehot
         # log_prob = prob.sum(axis=1).reshape(-1, 1)
 
-        reward = reward.reshape(-1, 1)
-        loss = torch.mean(-1 * log_prob * reward)
+        loss = torch.mean(-1 * log_prob * (G_value-baseline))  # 基线
 
         self.optimizer.zero_grad()
         loss.backward()

@@ -39,60 +39,58 @@ def run_evaluate_episodes(agent, env, render=False):
         episode_reward = 0
         while True:
             action = agent.predict(obs)
-            obs, reward, isOver, _ = env.step(action)
+            obs, reward, done, _ = env.step(action)
             episode_reward += reward
             if render:
                 env.render()
-            if isOver:
+            if done:
                 break
         eval_reward.append(episode_reward)
     return np.mean(eval_reward)
 
 
-# [r1,r2,...,rT] --> [G1,G2,...,GT]
-def calc_reward_to_go(reward_list, gamma=1.0):
-    for i in range(len(reward_list) - 2, -1, -1):
-        # G_i = r_i + γ·G_i+1
-        reward_list[i] += gamma * reward_list[i + 1]  # Gt
-    return reward_list
-
-
 def main():
-    env = gym.make('CartPole-v0')
     now = time.strftime('%Y_%m_%d-%H_%M_%S', time.localtime(time.time()))
-    # run目录指向保存训练日志的总目录，后面还新加了一个根据当前时间设置的子目录，用于归类数据
-    writer = SummaryWriter(f'run/{now}')
-    # env = env.unwrapped # Cancel the minimum score limit
+    relative_path = os.path.dirname(__file__)  # 获取相对路径 用来保存日志和模型参数
+    model_save_path = relative_path+'\\PG_model.pth'  # 模型参数保存地址
+    log_save_path = f'{relative_path}\\logs\\{now}'  # 日志保存地址
+
+    # logs目录指向保存训练日志的总目录，后面还新加了一个根据当前时间设置的子目录，用于归类数据
+    writer = SummaryWriter(log_save_path)
+
+    env = gym.make('CartPole-v0')
     obs_dim = env.observation_space.shape[0]
     act_dim = env.action_space.n
 
-    # 根据parl框架构建agent
     model = Model(obs_dim=obs_dim, act_dim=act_dim).to(device)
-    alg = PolicyGradient(model, lr=LEARNING_RATE)
-    agent = Agent(alg)
+    algorithm = PolicyGradient(model, lr=LEARNING_RATE)
+    agent = Agent(algorithm)
 
     # load model which already trained several times
-    save_path = './dqn_model.pth'
-    if os.path.exists(save_path):
-        agent.load(save_path)
+    if os.path.exists(model_save_path):
+        agent.load(model_save_path)
 
-    for i in range(1000):
+    max_episode = 1000
+    episode_per_evaluate = 100
+
+    # start train
+    for episode in range(max_episode):
         batch_obs, batch_action, batch_reward = run_train_episode(agent, env)
-        if i % 10 == 0:
-            print('episode:%3d | Train reward:%.1f' % (
-                i,  sum(batch_reward)))
-        writer.add_scalar('reward/train', sum(batch_reward), i)
-        batch_reward = calc_reward_to_go(batch_reward)
+
+        episode += 1  # 这里虽然自加1 但是不会影响外面for循环里episode的迭代
+        writer.add_scalar('reward/train', sum(batch_reward), episode)
 
         agent.learn(batch_obs, batch_action, batch_reward)
-        if (i + 1) % 100 == 0:
+        if episode % episode_per_evaluate == 0:
             # render=True 查看显示效果
             total_reward = run_evaluate_episodes(agent, env, render=False)
-            print('Test reward: {}'.format(total_reward))
-            writer.add_scalar('reward/test', total_reward, i)
+            print('episode:%-4d | Test reward:%.1f' % (
+                episode, total_reward))
+            writer.add_scalar('reward/test', total_reward, episode)
 
     # save the parameters to ./model.pth
-    agent.save(save_path)
+    agent.save(model_save_path)
+
 
 if __name__ == '__main__':
     main()
