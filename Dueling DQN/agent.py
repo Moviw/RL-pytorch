@@ -4,7 +4,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class Agent():
-    def __init__(self, algorithm, act_dim, e_greed=0.1, e_greed_decrement=0):
+    def __init__(self, algorithm, act_dim, e_greed=0.1, e_greed_decrement=0.0):
         assert isinstance(act_dim, int)
         self.algo = algorithm
         self.act_dim = act_dim

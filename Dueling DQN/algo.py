@@ -46,19 +46,20 @@ class Dueling_DQN():
         """ 使用DQN算法更新self.model的value网络
         """
         # 获取Q(s,a)
-        # q_values = self.model(obs).gather(dim=1, index=action.long()) # 直接用这一行代码与下面12行等效
+        q_values = self.model(obs).gather(
+            dim=1, index=action.long())  # 直接用这一行代码与下面12行等效
 
-        q_values = self.model(obs)
+        # q_values = self.model(obs)
 
-        action_dim = q_values.shape[-1]
-        # 将action转onehot向量，比如：3 => [0,0,0,1,0]
-        action_onehot = self.one_hot(action, num_classes=action_dim)
+        # action_dim = q_values.shape[-1]
+        # # 将action转onehot向量，比如：3 => [0,0,0,1,0]
+        # action_onehot = self.one_hot(action, num_classes=action_dim)
 
-        # 下面一行是逐元素相乘，拿到action对应的 Q(s,a)
-        # 比如：q_values = [[2.3, 5.7, 1.2, 3.9, 1.4]], action_onehot = [[0,0,0,1,0]]
-        #  ==> q_values = [[3.9]]
-        q_values = q_values * action_onehot
-        q_values = q_values.sum(axis=1).reshape(-1, 1)
+        # # 下面一行是逐元素相乘，拿到action对应的 Q(s,a)
+        # # 比如：q_values = [[2.3, 5.7, 1.2, 3.9, 1.4]], action_onehot = [[0,0,0,1,0]]
+        # #  ==> q_values = [[3.9]]
+        # q_values = q_values * action_onehot
+        # q_values = q_values.sum(axis=1).reshape(-1, 1)
 
         # 从target_model中获取 max Q' 的值，用于计算target_Q
         with torch.no_grad():
