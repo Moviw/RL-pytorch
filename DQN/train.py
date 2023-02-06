@@ -18,7 +18,7 @@ MEMORY_WARMUP_SIZE = 200  # replay_memory 里需要预存一些经验数据，�
 BATCH_SIZE = 64  # 每次给agent learn的数据数量，从replay memory随机里sample一批数据出来
 LEARNING_RATE = 0.0005  # 学习率
 GAMMA = 0.99  # reward 的衰减因子，一般取 0.9 到 0.999 不等
-  
+
 
 # 训练一个episode
 def run_train_episode(agent, env, rpm):
@@ -110,13 +110,13 @@ if __name__ == '__main__':
         total_reward, total_loss = run_train_episode(agent, env, rpm)
         episode += 1  # 这里虽然自加1 但是不会影响外面for循环里episode的迭代
 
-        writer.add_scalar('train/reward', total_reward, episode)
+        writer.add_scalar('reward/train', total_reward, episode)
         # writer.add_scalar('train/loss', total_loss, episode)
 
         if(episode % episode_per_evaluate == 0):
             # test part       render=True 查看显示效果
             eval_reward = run_evaluate_episodes(agent, env, render=False)
-            writer.add_scalar('test/reward', eval_reward,
+            writer.add_scalar('reward/test', eval_reward,
                               episode/episode_per_evaluate)
 
             print('episode:%-4d | e_greed:%.5f | Test reward:%.1f' % (

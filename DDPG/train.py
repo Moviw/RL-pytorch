@@ -104,7 +104,7 @@ if __name__ == '__main__':
         total_reward = run_train_episode(agent, env, rpm)
         episode += 1  # 这里虽然自加1 但是不会影响外面for循环里episode的迭代
 
-        writer.add_scalar('rewatd/train', total_reward, episode)
+        writer.add_scalar('reward/train', total_reward, episode)
 
         if(episode % episode_per_evaluate == 0):
             # test part       render=True 查看显示效果

@@ -88,11 +88,11 @@ if __name__ == '__main__':
 
         episode += 1
         total_reward = run_train_episode(env, agent)
-        writer.add_scalar('train/reward', total_reward, episode)
+        writer.add_scalar('reward/train', total_reward, episode)
 
         if episode % episode_per_evaluate == 0:
             eval_reward = run_evaluate_episodes(agent, env, render=False)
-            writer.add_scalar('test/reward', eval_reward,
+            writer.add_scalar('reward/test', eval_reward,
                               episode/episode_per_evaluate)
 
             print('episode:%-4d |  Test reward:%.1f' %

@@ -96,12 +96,12 @@ if __name__ == '__main__':
     for episode in range(max_episode):
 
         total_reward = run_train_episode(agent, env)
-        writer.add_scalar('train/reward', total_reward, episode)
+        writer.add_scalar('reward/train', total_reward, episode)
         episode += 1
 
         if episode % episode_per_evaluate == 0:
             eval_reward = run_evaluate_episodes(agent, env, render=False)
-            writer.add_scalar('test/reward', eval_reward,
+            writer.add_scalar('reward/test', eval_reward,
                               episode/episode_per_evaluate)
 
             print('episode:%-4d |  Test reward:%.1f' %

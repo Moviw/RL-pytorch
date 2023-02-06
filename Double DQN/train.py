@@ -110,13 +110,13 @@ if __name__ == '__main__':
         total_reward, total_loss = run_train_episode(agent, env, rpm)
         episode += 1  # 这里虽然自加1 但是不会影响外面for循环里episode的迭代
 
-        writer.add_scalar('train/reward', total_reward, episode)
+        writer.add_scalar('reward/train', total_reward, episode)
         # writer.add_scalar('train/loss', total_loss, episode)
 
         if(episode % episode_per_evaluate == 0):
             # test part       render=True 查看显示效果
             eval_reward = run_evaluate_episodes(agent, env, render=False)
-            writer.add_scalar('test/reward', eval_reward,
+            writer.add_scalar('reward/test', eval_reward,
                               episode/episode_per_evaluate)
 
             print('episode:%-4d | e_greed:%.5f | Test reward:%.1f' % (
