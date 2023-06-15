@@ -2,9 +2,28 @@ import torch
 import torch.nn.functional as F
 
 
-class PolicyNet(torch.nn.Module):
+class DDPG_Net(torch.nn.Module):
+    def __init__(self, state_dim, action_dim, action_up_bound, action_down_bound):
+        super(DDPG_Net, self).__init__()
+        self.actor_model = Actor(state_dim, action_dim, action_up_bound, action_down_bound)
+        self.critic_model = Critic(state_dim,action_dim)
+
+    def act(self, obs):
+        return self.actor_model(obs)
+
+    def criticize(self, obs,action):
+        return self.critic_model(obs,action)
+
+    def save(self, save_path):
+        torch.save(self.state_dict(), save_path)
+
+    def load(self, path):
+        self.load_state_dict(torch.load(path))
+
+
+class Actor(torch.nn.Module):
     def __init__(self, state_dim,  action_dim, action_up_bound, action_down_bound):
-        super(PolicyNet, self).__init__()
+        super(Actor, self).__init__()
         hidden_dim = 64
         self.fc1 = torch.nn.Linear(state_dim, hidden_dim)
         self.fc2 = torch.nn.Linear(hidden_dim, action_dim)
@@ -13,12 +32,13 @@ class PolicyNet(torch.nn.Module):
 
     def forward(self, x):
         x = F.relu(self.fc1(x))
-        return torch.tanh(self.fc2(x)) * (self.action_up_bound-self.action_down_bound)/2+(self.action_up_bound+self.action_down_bound)/2 # [-1,1] 映射到动作空间 => [down_bound,up_bound]
+        # [-1,1] 映射到动作空间 => [down_bound,up_bound]
+        return torch.tanh(self.fc2(x)) * (self.action_up_bound-self.action_down_bound)/2+(self.action_up_bound+self.action_down_bound)/2
 
 
-class QValueNet(torch.nn.Module):
+class Critic(torch.nn.Module):
     def __init__(self, state_dim,  action_dim):
-        super(QValueNet, self).__init__()
+        super(Critic, self).__init__()
         hidden_dim = 64
         self.fc1 = torch.nn.Linear(state_dim + action_dim, hidden_dim)
         self.fc2 = torch.nn.Linear(hidden_dim, hidden_dim)

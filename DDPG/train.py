@@ -53,7 +53,7 @@ def run_train_episode(agent, env, rpm):
 # 评估 agent, 跑 5 个episode，总reward求平均
 def run_evaluate_episodes(agent, env, render=False):
     eval_reward = []
-    for i in range(5):
+    for _ in range(5):
         obs = env.reset()
         episode_reward = 0
         while True:
@@ -65,6 +65,7 @@ def run_evaluate_episodes(agent, env, render=False):
             if done:
                 break
         eval_reward.append(episode_reward)
+    env.close()
     return np.mean(eval_reward)
 
 
@@ -87,8 +88,8 @@ if __name__ == '__main__':
                  SIGMA, actor_lr, critic_lr, TAU, GAMMA, device)
 
     # load model which already trained several times
-    # if os.path.exists(model_save_path):
-    #     agent.load(model_save_path)
+    if os.path.exists(model_save_path):
+        agent.load(model_save_path)
 
     # 先往经验池里存一些数据，避免最开始训练的时候样本丰富度不够
     while len(rpm) < MEMORY_WARMUP_SIZE:

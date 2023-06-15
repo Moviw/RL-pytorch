@@ -31,7 +31,6 @@ def run_train_episode(env, agent):
         transition_dict['rewards'].append(reward)
         transition_dict['dones'].append(done)
         state = next_state
-        state = next_state
         total_reward += reward
         if done:
             break
@@ -78,8 +77,8 @@ if __name__ == '__main__':
                 epochs, EPSILON, GAMMA)
 
     # load model which already trained several times
-    # if os.path.exists(model_save_path):
-    #     agent.load(model_save_path)
+    if os.path.exists(model_save_path):
+        agent.load(model_save_path)
 
     max_episode = 500  # 训练的总episode数
     episode_per_evaluate = 50

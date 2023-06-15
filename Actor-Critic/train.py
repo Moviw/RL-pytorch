@@ -7,11 +7,11 @@ import gym
 import torch
 import os
 import time
-from torch.utils.tensorboard import SummaryWriter
+# from torch.utils.tensorboard import SummaryWriter
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-ACTOR_LR = 1e-2  # Actor网络的 learning rate
-CRITIC_LR = 1e-2  # Critic网络的 learning rate
+ACTOR_LR = 1e-3  # Actor网络的 learning rate
+CRITIC_LR = 1e-3  # Critic网络的 learning rate
 GAMMA = 0.99  # reward 的衰减因子
 
 
@@ -19,11 +19,9 @@ def run_train_episode(agent, env):
     # 训练一个episode
     obs = env.reset()
     total_reward = 0
-    steps = 0
     batch_obs, batch_action, batch_reward, batch_next_obs, batch_done = [
     ], [], [], [], []  # 每个step创建一个空数组存储当前元素，这样方便在后面转化为Tensor
     while True:
-        steps += 1
         action = agent.sample(obs)
         next_obs, reward, done, info = env.step(action)
 
@@ -73,7 +71,7 @@ if __name__ == '__main__':
     log_save_path = f'{relative_path}\\logs\\{now}'  # 日志保存地址
 
     # logs目录指向保存训练日志的总目录，后面还新加了一个根据当前时间设置的子目录，用于归类数据
-    writer = SummaryWriter(log_save_path)
+    # writer = SummaryWriter(log_save_path)
 
     env = gym.make("CartPole-v0")
 
@@ -96,13 +94,13 @@ if __name__ == '__main__':
     for episode in range(max_episode):
 
         total_reward = run_train_episode(agent, env)
-        writer.add_scalar('reward/train', total_reward, episode)
+        # writer.add_scalar('reward/train', total_reward, episode)
         episode += 1
 
         if episode % episode_per_evaluate == 0:
             eval_reward = run_evaluate_episodes(agent, env, render=False)
-            writer.add_scalar('reward/test', eval_reward,
-                              episode/episode_per_evaluate)
+            # writer.add_scalar('reward/test', eval_reward,
+            #                   episode/episode_per_evaluate)
 
             print('episode:%-4d |  Test reward:%.1f' %
                   (episode, eval_reward))

@@ -27,11 +27,15 @@ class Agent():
     def learn(self, obs, action, reward, next_obs, done):
         """ 根据训练数据更新一次模型参数
         """
-        obs = torch.tensor(obs).to(device)
-        action = torch.tensor(action).reshape(-1, 1).to(device)
-        reward = torch.tensor(reward).reshape(-1, 1).to(device)
-        next_obs = torch.tensor(next_obs, requires_grad=False).to(device)
-        done = torch.tensor(done, dtype=torch.float).reshape(-1, 1).to(device)
+        obs = torch.tensor(obs, dtype=torch.float32).to(device)
+        action = torch.tensor(
+            action).reshape(-1, 1).to(device)
+        reward = torch.tensor(
+            reward, dtype=torch.float32).reshape(-1, 1).to(device)
+        next_obs = torch.tensor(
+            next_obs, requires_grad=False, dtype=torch.float32).to(device)
+        done = torch.tensor(
+            done, dtype=torch.float32).reshape(-1, 1).to(device)
         critic_loss, actor_loss = self.algo.learn(
             obs, action, reward, next_obs, done)  # 训练一次网络
         return critic_loss, actor_loss
