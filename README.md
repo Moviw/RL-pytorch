@@ -11,10 +11,19 @@
 - numpy==1.23.1
 - torch==1.11.0
 
-[DQN](lesson3/dqn/train.py)
+[DQN](DQN/train.py)
 
-[Policy Gradient](lesson4/policy_gradient/train.py)
+[Policy Gradient](Policy_Gradient/train.py)
 
-[DDPG](lesson5/ddpg/train.py)
+[DDPG](DDPG/train.py)
+
+[AC](Actor-Critic/train.py)
+
+[Double DQN](Double_DQN/train.py)
+
+[Dueling DQN](Dueling_DQN/train.py)
+
+[PPO](PPO/train.py)
+
 
 还请各位大佬给予宝贵意见，如果可以的话点个Star也行:)
